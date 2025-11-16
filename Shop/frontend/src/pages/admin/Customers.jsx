@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Card, Table, Spinner, Alert } from 'react-bootstrap';
+import { Container, Card, Table, Spinner, Alert, Button } from 'react-bootstrap';
 import axios from '../../utils/axios';
+import { toast } from 'react-toastify';
 
 const Customers = () => {
   const [customers, setCustomers] = useState([]);
@@ -19,6 +20,18 @@ const Customers = () => {
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load customers');
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (customerId, customerName) => {
+    if (window.confirm(`Are you sure you want to delete customer "${customerName}"? This action cannot be undone.`)) {
+      try {
+        await axios.delete(`/admin/customers/${customerId}`);
+        toast.success('Customer deleted successfully');
+        fetchCustomers();
+      } catch (err) {
+        toast.error(err.response?.data?.message || 'Failed to delete customer');
+      }
     }
   };
 
@@ -55,6 +68,7 @@ const Customers = () => {
                   <th>Phone</th>
                   <th>Location</th>
                   <th>Registered Date</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -67,6 +81,15 @@ const Customers = () => {
                     <td>{customer.phone || 'N/A'}</td>
                     <td>{customer.location || 'N/A'}</td>
                     <td>{new Date(customer.createdAt).toLocaleDateString()}</td>
+                    <td>
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={() => handleDelete(customer._id, customer.name)}
+                      >
+                        <i className="bi bi-trash"></i>
+                      </Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

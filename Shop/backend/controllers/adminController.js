@@ -304,6 +304,26 @@ export const getAllCustomers = async (req, res) => {
   }
 };
 
+// Delete customer
+export const deleteCustomer = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const customer = await User.findOneAndDelete({ _id: id, role: 'customer' });
+
+    if (!customer) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    // Optionally: Delete all orders associated with this customer
+    // await Order.deleteMany({ customerId: id });
+
+    res.json({ message: 'Customer deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 // ==================== ADMIN MANAGEMENT ====================
 
 // Create admin

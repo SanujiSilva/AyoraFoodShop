@@ -20,6 +20,7 @@ import {
   getOrdersByLocation,
   // Customers
   getAllCustomers,
+  deleteCustomer,
   // Admins
   createAdmin,
   getAllAdmins,
@@ -64,6 +65,7 @@ router.get('/orders-by-location', getOrdersByLocation);
 
 // ==================== CUSTOMER ROUTES ====================
 router.get('/customers', getAllCustomers);
+router.delete('/customers/:id', deleteCustomer);
 
 // ==================== ADMIN MANAGEMENT ROUTES ====================
 router.post('/admins', createAdmin);
