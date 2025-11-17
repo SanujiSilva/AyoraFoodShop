@@ -316,6 +316,40 @@ export const updateOrderStatus = async (req, res) => {
   }
 };
 
+// Delete orders by date
+export const deleteOrdersByDate = async (req, res) => {
+  try {
+    const { date } = req.body;
+
+    if (!date) {
+      return res.status(400).json({ message: 'Date is required' });
+    }
+
+    // Parse the date and set time range for the full day
+    const startDate = new Date(date);
+    startDate.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(date);
+    endDate.setHours(23, 59, 59, 999);
+
+    // Delete all orders within the date range
+    const result = await Order.deleteMany({
+      date: {
+        $gte: startDate,
+        $lte: endDate
+      }
+    });
+
+    res.json({ 
+      message: `${result.deletedCount} order(s) deleted successfully`,
+      deletedCount: result.deletedCount 
+    });
+  } catch (error) {
+    console.error('Error deleting orders:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 // ==================== CUSTOMER MANAGEMENT ====================
 
 // Get all customers

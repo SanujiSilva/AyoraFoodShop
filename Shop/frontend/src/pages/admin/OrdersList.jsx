@@ -91,6 +91,39 @@ const OrdersList = () => {
     }
   };
 
+  const handleDeleteByDate = async () => {
+    if (!selectedDate) {
+      toast.error('Please select a date first');
+      return;
+    }
+
+    const ordersToDelete = filteredOrders.filter((order) => {
+      const orderDate = new Date(order.date).toISOString().split('T')[0];
+      return orderDate === selectedDate;
+    });
+
+    if (ordersToDelete.length === 0) {
+      toast.error('No orders found for the selected date');
+      return;
+    }
+
+    const confirmMessage = `Are you sure you want to delete ${ordersToDelete.length} order(s) from ${new Date(selectedDate).toLocaleDateString()}?\n\nThis action cannot be undone!`;
+    
+    if (window.confirm(confirmMessage)) {
+      try {
+        const response = await axios.delete('/admin/orders/delete-by-date', {
+          data: { date: selectedDate }
+        });
+        toast.success(response.data.message);
+        setSelectedDate('');
+        fetchOrders();
+      } catch (error) {
+        console.error('Delete orders error:', error);
+        toast.error(error.response?.data?.message || 'Failed to delete orders');
+      }
+    }
+  };
+
   const getStatusVariant = (status) => {
     switch (status) {
       case 'Pending':
@@ -431,6 +464,23 @@ const OrdersList = () => {
               >
                 <i className="bi bi-x-circle me-1"></i>
                 Clear Filters
+              </Button>
+            )}
+            {selectedDate && filteredOrders.length > 0 && (
+              <Button 
+                variant="danger" 
+                size="sm" 
+                onClick={handleDeleteByDate}
+                style={{
+                  borderWidth: '2px',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                  border: '2px solid #991b1b'
+                }}
+              >
+                <i className="bi bi-trash me-1"></i>
+                Delete Orders ({filteredOrders.filter(o => new Date(o.date).toISOString().split('T')[0] === selectedDate).length})
               </Button>
             )}
             <div className="ms-auto">

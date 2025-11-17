@@ -16,6 +16,7 @@ import {
   getAllOrders,
   addOrderManually,
   updateOrderStatus,
+  deleteOrdersByDate,
   getDailyIncome,
   getOrdersByLocation,
   // Customers
@@ -60,6 +61,7 @@ router.delete('/foods/:id', deleteFood);
 router.get('/orders', getAllOrders);
 router.post('/orders', addOrderManually);
 router.put('/orders/:id/status', updateOrderStatus);
+router.delete('/orders/delete-by-date', deleteOrdersByDate);
 router.get('/daily-income', getDailyIncome);
 router.get('/orders-by-location', getOrdersByLocation);
 
