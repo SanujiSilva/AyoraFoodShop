@@ -357,17 +357,32 @@ const ManageFoods = () => {
                     >
                       LKR {(food.price || 0).toFixed(2)}
                     </div>
-                    <Badge 
-                      style={{
-                        background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                        border: 'none',
-                        fontSize: '0.9rem',
-                        padding: '0.4rem 0.8rem'
-                      }}
-                    >
-                      <i className="bi bi-boxes me-1"></i>
-                      Qty: {food.quantity || 0}
-                    </Badge>
+                    <div className="d-flex flex-column align-items-end gap-1">
+                      <Badge 
+                        style={{
+                          background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                          border: 'none',
+                          fontSize: '0.85rem',
+                          padding: '0.4rem 0.8rem'
+                        }}
+                      >
+                        <i className="bi bi-boxes me-1"></i>
+                        Available: {food.quantity || 0}
+                      </Badge>
+                      {(food.orderedQty || 0) > 0 && (
+                        <Badge 
+                          style={{
+                            background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                            border: 'none',
+                            fontSize: '0.85rem',
+                            padding: '0.4rem 0.8rem'
+                          }}
+                        >
+                          <i className="bi bi-cart-check me-1"></i>
+                          Ordered: {food.orderedQty || 0}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
 
                   {/* Action Buttons */}

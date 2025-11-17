@@ -63,7 +63,7 @@ const Login = () => {
               <h1 className="fw-bold text-white" style={{
                 textShadow: '0 0 20px rgba(251, 191, 36, 0.6), 2px 2px 4px rgba(0,0,0,0.8)'
               }}>Customer Login</h1>
-              <p className="text-white-50">Welcome back to Ayora Foods</p>
+              <p className="text-white-50">Welcome back to Ayora Food</p>
             </div>
             <Card className="modern-card shadow-lg animate-fade-in" style={{ 
               animationDelay: '0.2s',

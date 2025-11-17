@@ -16,7 +16,6 @@ import AdminRoute from './components/AdminRoute';
 
 // Customer Pages
 import Home from './pages/customer/Home';
-import Login from './pages/customer/Login';
 import Register from './pages/customer/Register';
 import DailyFoods from './pages/customer/DailyFoods';
 import Cart from './pages/customer/Cart';
@@ -24,8 +23,10 @@ import PlaceOrder from './pages/customer/PlaceOrder';
 import OrderHistory from './pages/customer/OrderHistory';
 import Profile from './pages/customer/Profile';
 
+// Unified Login
+import UnifiedLogin from './pages/UnifiedLogin';
+
 // Admin Pages
-import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import MasterFoods from './pages/admin/MasterFoods';
 import ManageFoods from './pages/admin/ManageFoods';
@@ -48,7 +49,7 @@ function App() {
               <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
+                <Route path="/login" element={<UnifiedLogin />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/daily-foods" element={<DailyFoods />} />
 
@@ -87,7 +88,6 @@ function App() {
                 />
 
                 {/* Admin Routes */}
-                <Route path="/admin/login" element={<AdminLogin />} />
                 <Route
                   path="/admin/dashboard"
                   element={

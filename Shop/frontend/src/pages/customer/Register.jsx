@@ -16,11 +16,54 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [phoneError, setPhoneError] = useState('');
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    
+    // Validate phone number in real-time
+    if (e.target.name === 'phone') {
+      const phoneValidation = validatePhoneNumber(e.target.value);
+      if (e.target.value && !phoneValidation.valid) {
+        setPhoneError(phoneValidation.message);
+      } else {
+        setPhoneError('');
+      }
+    }
+  };
+
+  const validatePhoneNumber = (phone) => {
+    // Remove all spaces and dashes
+    const cleaned = phone.replace(/[\s-]/g, '');
+    
+    // Check if it contains only digits (and optionally + at start)
+    if (!/^[\+]?\d+$/.test(cleaned)) {
+      return { 
+        valid: false, 
+        message: 'Phone number should only contain digits' 
+      };
+    }
+    
+    // Check length
+    const digitsOnly = cleaned.replace(/\+/g, '');
+    
+    if (digitsOnly.length < 10) {
+      return { 
+        valid: false, 
+        message: 'Phone number must be at least 10 digits' 
+      };
+    }
+    
+    if (digitsOnly.length > 10) {
+      return { 
+        valid: false, 
+        message: 'Phone number cannot exceed 10 digits' 
+      };
+    }
+    
+    return { valid: true, message: '' };
   };
 
   const handleSubmit = async (e) => {
@@ -28,6 +71,14 @@ const Register = () => {
 
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
+      return;
+    }
+
+    // Validate phone number
+    const phoneValidation = validatePhoneNumber(formData.phone);
+    if (!phoneValidation.valid) {
+      setPhoneError(phoneValidation.message);
+      toast.error(phoneValidation.message);
       return;
     }
 
@@ -77,7 +128,7 @@ const Register = () => {
               <h1 className="fw-bold" style={{
                 color: '#000000',
                 textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 2px 2px 4px rgba(255,255,255,0.3)'
-              }}>Join Ayora Foods</h1>
+              }}>Join Ayora Food</h1>
               <p style={{ color: '#1f2937', fontWeight: '600' }}>Create your account today</p>
             </div>
             <Card className="modern-card shadow-lg animate-fade-in" style={{ 
@@ -115,11 +166,23 @@ const Register = () => {
                   <Form.Control
                     type="tel"
                     name="phone"
-                    placeholder="Enter your phone number"
+                    placeholder="Enter your phone number (e.g., 0771234567)"
                     value={formData.phone}
                     onChange={handleChange}
                     required
+                    isInvalid={!!phoneError}
+                    style={phoneError ? { borderColor: '#dc3545' } : {}}
                   />
+                  {phoneError && (
+                    <Form.Control.Feedback type="invalid" style={{ display: 'block' }}>
+                      <i className="bi bi-exclamation-circle me-1"></i>
+                      {phoneError}
+                    </Form.Control.Feedback>
+                  )}
+                  <Form.Text className="text-muted">
+                    <i className="bi bi-info-circle me-1"></i>
+                    Enter a valid phone number (10 digits starting with 0)
+                  </Form.Text>
                 </Form.Group>
 
                 <Form.Group className="mb-3">

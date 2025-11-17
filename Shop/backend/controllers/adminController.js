@@ -125,7 +125,33 @@ export const addFood = async (req, res) => {
 export const getAllFoods = async (req, res) => {
   try {
     const foods = await DailyFood.find().populate('food').sort({ date: -1 });
-    res.json(foods);
+    
+    // Calculate ordered quantities for each food
+    const foodsWithOrderedQty = await Promise.all(
+      foods.map(async (food) => {
+        // Get all orders that contain this food item
+        const orders = await Order.find({
+          'items.foodId': food._id,
+          status: { $in: ['Pending', 'Confirm', 'Delivered'] } // Exclude cancelled
+        });
+        
+        // Sum up the quantities ordered
+        let orderedQty = 0;
+        orders.forEach(order => {
+          const item = order.items.find(i => i.foodId.toString() === food._id.toString());
+          if (item) {
+            orderedQty += item.qty;
+          }
+        });
+        
+        return {
+          ...food.toObject(),
+          orderedQty
+        };
+      })
+    );
+    
+    res.json(foodsWithOrderedQty);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

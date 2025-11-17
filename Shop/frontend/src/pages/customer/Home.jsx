@@ -72,7 +72,7 @@ const Home = () => {
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   animation: 'textShine 3s linear infinite'
-                }}>Ayora Foods</span>
+                }}>Ayora Food</span>
               </h1>
               <p className="lead mb-4 text-white fs-4" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>
                 ✨ Delicious daily meals delivered fresh to your doorstep. Order now and enjoy authentic flavors!
@@ -136,7 +136,7 @@ const Home = () => {
 
       {/* Features Section */}
       <Container className="py-5 my-5">
-        <h2 className="text-center mb-2 fw-bold display-5">Why Choose Ayora Foods?</h2>
+        <h2 className="text-center mb-2 fw-bold display-5">Why Choose Ayora Food?</h2>
         <p className="text-center text-muted mb-5 lead">Experience the best in daily meal delivery</p>
         <Row className="g-4">
           <Col md={4}>

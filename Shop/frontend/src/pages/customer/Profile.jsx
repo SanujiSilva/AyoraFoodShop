@@ -9,6 +9,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [phoneError, setPhoneError] = useState('');
   const [formData, setFormData] = useState({
     name: user?.name || '',
     phone: user?.phone || '',
@@ -17,8 +18,52 @@ const Profile = () => {
     confirmPassword: '',
   });
 
+  const validatePhoneNumber = (phone) => {
+    if (!phone) return { valid: true, message: '' }; // Phone is optional in profile
+    
+    // Remove all spaces and dashes
+    const cleaned = phone.replace(/[\s-]/g, '');
+    
+    // Check if it contains only digits (and optionally + at start)
+    if (!/^[\+]?\d+$/.test(cleaned)) {
+      return { 
+        valid: false, 
+        message: 'Phone number should only contain digits' 
+      };
+    }
+    
+    // Check length
+    const digitsOnly = cleaned.replace(/\+/g, '');
+    
+    if (digitsOnly.length < 10) {
+      return { 
+        valid: false, 
+        message: 'Phone number must be at least 10 digits' 
+      };
+    }
+    
+    if (digitsOnly.length > 10) {
+      return { 
+        valid: false, 
+        message: 'Phone number cannot exceed 10 digits' 
+      };
+    }
+    
+    return { valid: true, message: '' };
+  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    
+    // Validate phone number in real-time
+    if (e.target.name === 'phone') {
+      const phoneValidation = validatePhoneNumber(e.target.value);
+      if (e.target.value && !phoneValidation.valid) {
+        setPhoneError(phoneValidation.message);
+      } else {
+        setPhoneError('');
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -27,6 +72,16 @@ const Profile = () => {
     if (formData.password && formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
       return;
+    }
+
+    // Validate phone number if provided
+    if (formData.phone) {
+      const phoneValidation = validatePhoneNumber(formData.phone);
+      if (!phoneValidation.valid) {
+        setPhoneError(phoneValidation.message);
+        toast.error(phoneValidation.message);
+        return;
+      }
     }
 
     setLoading(true);
@@ -221,12 +276,23 @@ const Profile = () => {
                           value={formData.phone}
                           onChange={handleChange}
                           placeholder="Enter your phone number"
+                          isInvalid={!!phoneError}
                           style={{
-                            border: '2px solid #fbbf24',
+                            border: phoneError ? '2px solid #dc3545' : '2px solid #fbbf24',
                             borderRadius: '8px',
                             padding: '12px',
                           }}
                         />
+                        {phoneError && (
+                          <Form.Control.Feedback type="invalid" style={{ display: 'block' }}>
+                            <i className="bi bi-exclamation-circle me-1"></i>
+                            {phoneError}
+                          </Form.Control.Feedback>
+                        )}
+                        <Form.Text className="text-muted">
+                          <i className="bi bi-info-circle me-1"></i>
+                          Enter exactly 10 digits
+                        </Form.Text>
                       </Form.Group>
                     </Col>
 

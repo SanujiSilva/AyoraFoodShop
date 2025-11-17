@@ -16,7 +16,6 @@ export const getDailyFoods = async (req, res) => {
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     const foods = await DailyFood.find({
-      quantity: { $gt: 0 },
       date: {
         $gte: today,
         $lt: tomorrow

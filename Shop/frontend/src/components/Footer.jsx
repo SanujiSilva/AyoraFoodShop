@@ -24,7 +24,7 @@ const Footer = () => {
                 display: 'inline-block'
               }}>
                 <i className="bi bi-shop me-2"></i>
-                Ayora Foods
+                Ayora Food
               </h4>
             </div>
             <p className="text-light mb-3" style={{ lineHeight: '1.8' }}>
@@ -114,21 +114,21 @@ const Footer = () => {
                 <i className="bi bi-geo-alt-fill text-warning me-3 mt-1"></i>
                 <div className="text-light">
                   <strong>Address:</strong><br/>
-                  123 Main Street, Colombo, Sri Lanka
+                  Makandura, Kurunegala, Sri Lanka
                 </div>
               </li>
               <li className="mb-3 d-flex align-items-start">
                 <i className="bi bi-telephone-fill text-warning me-3 mt-1"></i>
                 <div className="text-light">
                   <strong>Phone:</strong><br/>
-                  +94 123 456 789
+                  +94 771 760 966
                 </div>
               </li>
               <li className="mb-3 d-flex align-items-start">
                 <i className="bi bi-envelope-fill text-warning me-3 mt-1"></i>
                 <div className="text-light">
                   <strong>Email:</strong><br/>
-                  info@ayorafoods.com
+                  ayorafood@gmail.com
                 </div>
               </li>
             </ul>
@@ -139,15 +139,15 @@ const Footer = () => {
             <ul className="list-unstyled text-light">
               <li className="mb-2 d-flex justify-content-between">
                 <span>Monday - Friday:</span>
-                <strong className="text-warning">8AM - 10PM</strong>
+                <strong className="text-warning">5PM - 11PM</strong>
               </li>
               <li className="mb-2 d-flex justify-content-between">
                 <span>Saturday:</span>
-                <strong className="text-warning">9AM - 11PM</strong>
+                <strong className="text-warning">5PM - 11PM</strong>
               </li>
               <li className="mb-2 d-flex justify-content-between">
                 <span>Sunday:</span>
-                <strong className="text-warning">10AM - 9PM</strong>
+                <strong className="text-warning">Closed</strong>
               </li>
             </ul>
           </Col>
@@ -158,7 +158,7 @@ const Footer = () => {
         <Row>
           <Col md={6} className="text-center text-md-start mb-2 mb-md-0">
             <p className="mb-0 text-light">
-              © {new Date().getFullYear()} <strong className="text-warning">Ayora Foods</strong>. All rights reserved.
+              © {new Date().getFullYear()} <strong className="text-warning">Ayora Food</strong>. All rights reserved.
             </p>
           </Col>
           <Col md={6} className="text-center text-md-end">

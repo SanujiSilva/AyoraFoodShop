@@ -44,21 +44,24 @@ const NavigationBar = () => {
           WebkitTextFillColor: 'transparent',
           display: 'flex',
           alignItems: 'center',
-          gap: '0.5rem'
+          gap: '0.75rem'
         }}>
-          <div style={{
-            width: '45px',
-            height: '45px',
-            borderRadius: '12px',
-            background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 4px 15px rgba(251, 191, 36, 0.4)'
-          }}>
-            <i className="bi bi-shop" style={{ color: '#000', fontSize: '1.5rem' }}></i>
-          </div>
-          <span>Ayora Foods</span>
+          <img 
+            src="/logo.png"
+            alt="Ayora Food Logo" 
+            style={{
+              width: '55px',
+              height: '55px',
+              borderRadius: '100%', 
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 4px 10px rgba(251, 191, 36, 0.4))'
+            }}
+            onError={(e) => {
+              e.target.style.display = 'none';
+              console.error('Logo image failed to load');
+            }}
+          />
+          <span>Ayora Food</span>
         </Navbar.Brand>
         
         <Navbar.Toggle 

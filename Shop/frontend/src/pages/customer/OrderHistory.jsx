@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Card, Badge, Spinner, Alert, Row, Col } from 'react-bootstrap';
+import { Container, Card, Badge, Spinner, Alert, Row, Col, Form } from 'react-bootstrap';
 import axios from '../../utils/axios';
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
 
   useEffect(() => {
     fetchOrders();
@@ -15,11 +17,26 @@ const OrderHistory = () => {
     try {
       const { data } = await axios.get('/orders/history');
       setOrders(data);
+      setFilteredOrders(data);
       setLoading(false);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load orders');
       setLoading(false);
     }
+  };
+
+  const handleDateFilter = (date) => {
+    setSelectedDate(date);
+    if (!date) {
+      setFilteredOrders(orders);
+      return;
+    }
+
+    const filtered = orders.filter(order => {
+      const orderDate = new Date(order.date).toISOString().split('T')[0];
+      return orderDate === date;
+    });
+    setFilteredOrders(filtered);
   };
 
   const getStatusVariant = (status) => {
@@ -103,12 +120,74 @@ const OrderHistory = () => {
               <div>
                 <h2 className="fw-bold mb-0" style={{ color: '#fff', fontSize: '2rem' }}>Order History</h2>
                 <p className="mb-0" style={{ color: '#d1d5db', fontSize: '0.95rem' }}>
-                  View and track all your orders • {orders.length} {orders.length === 1 ? 'Order' : 'Orders'}
+                  View and track all your orders • {filteredOrders.length} {filteredOrders.length === 1 ? 'Order' : 'Orders'}
                 </p>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Date Filter */}
+        {orders.length > 0 && (
+          <Card className="mb-4" style={{ 
+            border: 'none', 
+            borderRadius: '12px',
+            background: '#fff',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+          }}>
+            <Card.Body className="p-3">
+              <Row className="align-items-center">
+                <Col md={4}>
+                  <div className="d-flex align-items-center gap-2">
+                    <i className="bi bi-funnel" style={{ fontSize: '1.2rem', color: '#f59e0b' }}></i>
+                    <span className="fw-semibold" style={{ color: '#1f2937' }}>Filter by Date</span>
+                  </div>
+                </Col>
+                <Col md={5}>
+                  <Form.Control
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => handleDateFilter(e.target.value)}
+                    style={{
+                      borderWidth: '2px',
+                      borderColor: '#fbbf24',
+                      borderRadius: '8px',
+                      padding: '0.6rem',
+                      fontSize: '0.95rem'
+                    }}
+                  />
+                </Col>
+                <Col md={3}>
+                  {selectedDate && (
+                    <button
+                      onClick={() => handleDateFilter('')}
+                      className="btn btn-sm w-100"
+                      style={{
+                        background: 'transparent',
+                        border: '2px solid #6b7280',
+                        color: '#6b7280',
+                        fontWeight: '600',
+                        borderRadius: '8px',
+                        padding: '0.5rem'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#6b7280';
+                        e.currentTarget.style.color = '#fff';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'transparent';
+                        e.currentTarget.style.color = '#6b7280';
+                      }}
+                    >
+                      <i className="bi bi-x-circle me-1"></i>
+                      Clear Filter
+                    </button>
+                  )}
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
+        )}
 
         {orders.length === 0 ? (
           <Card style={{ 
@@ -166,9 +245,35 @@ const OrderHistory = () => {
               `}
             </style>
           </Card>
+        ) : filteredOrders.length === 0 ? (
+          <Card style={{ 
+            border: 'none', 
+            borderRadius: '16px', 
+            textAlign: 'center', 
+            padding: '3rem 2rem',
+            background: '#fff',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
+          }}>
+            <div style={{
+              width: '100px',
+              height: '100px',
+              background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1.5rem'
+            }}>
+              <i className="bi bi-search" style={{ fontSize: '3rem', color: '#f59e0b' }}></i>
+            </div>
+            <h4 className="fw-bold mb-2" style={{ color: '#1f2937' }}>No Orders Found</h4>
+            <p className="text-muted mb-0">
+              No orders found for the selected date. Try a different date or clear the filter.
+            </p>
+          </Card>
         ) : (
           <div>
-            {orders.map((order, idx) => (
+            {filteredOrders.map((order, idx) => (
               <Card 
                 key={order._id} 
                 className="mb-3"
