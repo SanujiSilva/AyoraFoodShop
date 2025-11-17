@@ -751,7 +751,7 @@ const OrdersList = () => {
           </Card.Header>
           <Card.Body className="p-0">
             <div className="table-responsive">
-            <Table hover className="mb-0">mb-0">
+            <Table hover className="mb-0">
               <thead>
                 <tr 
                   style={{
@@ -760,7 +760,7 @@ const OrdersList = () => {
                   }}
                 >
                   <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
-                    <i className="bi bi-hash me-1"></i>Order #
+                    <i className="bi bi-hash me-1"></i>Order No
                   </th>
                   <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
                     <i className="bi bi-person me-1"></i>Customer
