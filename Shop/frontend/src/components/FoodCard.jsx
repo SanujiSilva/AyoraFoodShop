@@ -49,11 +49,46 @@ const FoodCard = ({ food }) => {
         )}
       </div>
       <Card.Body className="modern-card-body d-flex flex-column">
-        <Card.Title className="h5 fw-bold text-dark mb-2">{food.foodName}</Card.Title>
+        <div className="d-flex justify-content-between align-items-start mb-2">
+          <Card.Title className="h5 fw-bold text-dark mb-0 flex-grow-1">{food.foodName}</Card.Title>
+          {food.category && (
+            <span 
+              className="badge ms-2"
+              style={{
+                background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+                color: '#000',
+                fontSize: '0.7rem',
+                padding: '0.3rem 0.6rem',
+                border: '1px solid #000',
+                fontWeight: '600',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {food.category}
+            </span>
+          )}
+        </div>
         {food.description && (
           <Card.Text className="text-muted small flex-grow-1 mb-3">
             {food.description}
           </Card.Text>
+        )}
+        {food.optionalDescription && (
+          <div 
+            className="mb-3 p-2 rounded"
+            style={{
+              background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%)',
+              border: '2px solid #fbbf24',
+              borderRadius: '8px'
+            }}
+          >
+            <div className="d-flex align-items-start gap-2">
+              <i className="bi bi-star-fill mt-1" style={{ color: '#fbbf24', fontSize: '0.85rem' }}></i>
+              <p className="mb-0 small fw-semibold" style={{ color: '#1f2937' }}>
+                {food.optionalDescription}
+              </p>
+            </div>
+          </div>
         )}
         <div className="d-flex justify-content-between align-items-center mb-3">
           <div>

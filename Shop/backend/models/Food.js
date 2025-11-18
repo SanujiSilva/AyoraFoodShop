@@ -9,7 +9,7 @@ const foodSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['Rice', 'Noodles', 'Kottu', 'Burgers', 'Submarines', 'Pizza', 'Biriyani', 'Other'],
+    enum: ['Rice', 'Noodles', 'Kottu', 'Burgers', 'Submarines', 'Pizza', 'Biriyani', 'Hoppers', 'Short Eats', 'Gravy', 'Other'],
     default: 'Other',
   },
   defaultPrice: {

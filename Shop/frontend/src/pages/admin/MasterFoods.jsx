@@ -18,7 +18,7 @@ const MasterFoods = () => {
     isActive: true,
   });
 
-  const categories = ['Rice', 'Noodles', 'Kottu', 'Burgers', 'Submarines', 'Pizza', 'Biriyani', 'Other'];
+  const categories = ['Rice', 'Noodles', 'Kottu', 'Burgers', 'Submarines', 'Pizza', 'Biriyani', 'Hoppers', 'Short Eats', 'Gravy', 'Other'];
 
   useEffect(() => {
     fetchFoods();

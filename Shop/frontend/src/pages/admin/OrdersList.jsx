@@ -394,12 +394,13 @@ const OrdersList = () => {
             Filter Orders
           </h5>
         </Card.Header>
-        <Card.Body className="p-4" style={{ background: '#fefce8' }}>
-          <div className="d-flex align-items-center gap-3 flex-wrap">
+        <Card.Body className="p-3 p-md-4" style={{ background: '#fefce8' }}>
+          {/* Desktop Filter Layout */}
+          <div className="d-none d-lg-flex align-items-center gap-3 flex-wrap">
             <div className="d-flex align-items-center gap-2">
               <Form.Label className="mb-0 fw-semibold">
                 <i className="bi bi-hash me-1" style={{ color: '#fbbf24' }}></i>
-                Order #:
+                Order No:
               </Form.Label>
               <Form.Control
                 type="text"
@@ -500,6 +501,128 @@ const OrdersList = () => {
                   </span>
                 )}
               </Badge>
+            </div>
+          </div>
+
+          {/* Mobile Filter Layout */}
+          <div className="d-lg-none">
+            {/* Order Number Filter */}
+            <Form.Group className="mb-3">
+              <Form.Label className="fw-semibold d-flex align-items-center">
+                <i className="bi bi-hash me-2" style={{ color: '#fbbf24', fontSize: '1.1rem' }}></i>
+                Order Number
+              </Form.Label>
+              <Form.Control
+                type="text"
+                value={orderNumberFilter}
+                onChange={(e) => setOrderNumberFilter(e.target.value)}
+                placeholder="Search by order number"
+                style={{ 
+                  borderWidth: '2px',
+                  borderRadius: '8px',
+                  padding: '0.7rem'
+                }}
+              />
+            </Form.Group>
+
+            {/* Date Filter */}
+            <Form.Group className="mb-3">
+              <Form.Label className="fw-semibold d-flex align-items-center">
+                <i className="bi bi-calendar3 me-2" style={{ color: '#fbbf24', fontSize: '1.1rem' }}></i>
+                Filter by Date
+              </Form.Label>
+              <Form.Control
+                type="date"
+                value={selectedDate}
+                onChange={handleDateChange}
+                style={{ 
+                  borderWidth: '2px',
+                  borderRadius: '8px',
+                  padding: '0.7rem'
+                }}
+              />
+            </Form.Group>
+
+            {/* Location Filter */}
+            <Form.Group className="mb-3">
+              <Form.Label className="fw-semibold d-flex align-items-center">
+                <i className="bi bi-geo-alt me-2" style={{ color: '#fbbf24', fontSize: '1.1rem' }}></i>
+                Filter by Location
+              </Form.Label>
+              <Form.Select
+                value={selectedLocation}
+                onChange={handleLocationChange}
+                style={{ 
+                  borderWidth: '2px',
+                  borderRadius: '8px',
+                  padding: '0.7rem'
+                }}
+              >
+                <option value="">All Locations</option>
+                {locations.map((loc, index) => (
+                  <option key={index} value={loc}>
+                    {loc}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
+            {/* Action Buttons */}
+            <div className="d-grid gap-2">
+              {/* Results Badge */}
+              <div 
+                className="p-3 rounded text-center"
+                style={{
+                  background: 'linear-gradient(135deg, #1f2937 0%, #000 100%)',
+                  border: '2px solid #fbbf24'
+                }}
+              >
+                <div className="text-white fw-bold">
+                  <i className="bi bi-eye me-2" style={{ color: '#fbbf24' }}></i>
+                  Showing: <span style={{ color: '#fbbf24' }}>{filteredOrders.length}</span>
+                  {(selectedDate || selectedLocation || orderNumberFilter) && (
+                    <span className="ms-2">
+                      of {orders.length} total
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Clear Filters Button */}
+              {(selectedDate || selectedLocation || orderNumberFilter) && (
+                <Button 
+                  variant="outline-danger" 
+                  onClick={clearFilters}
+                  style={{
+                    borderWidth: '2px',
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    padding: '0.7rem'
+                  }}
+                >
+                  <i className="bi bi-x-circle me-2"></i>
+                  Clear All Filters
+                </Button>
+              )}
+
+              {/* Delete Orders Button */}
+              {selectedDate && filteredOrders.length > 0 && (
+                <Button 
+                  variant="danger" 
+                  onClick={handleDeleteByDate}
+                  style={{
+                    borderWidth: '2px',
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    padding: '0.7rem',
+                    background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                    border: '2px solid #991b1b'
+                  }}
+                >
+                  <i className="bi bi-trash me-2"></i>
+                  Delete Orders ({filteredOrders.filter(o => new Date(o.date).toISOString().split('T')[0] === selectedDate).length})
+                </Button>
+              )}
             </div>
           </div>
         </Card.Body>
@@ -800,150 +923,339 @@ const OrdersList = () => {
             </h5>
           </Card.Header>
           <Card.Body className="p-0">
-            <div className="table-responsive">
-            <Table hover className="mb-0">
-              <thead>
-                <tr 
-                  style={{
-                    background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
-                    borderBottom: '3px solid #000'
-                  }}
-                >
-                  <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
-                    <i className="bi bi-hash me-1"></i>Order No
-                  </th>
-                  <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
-                    <i className="bi bi-person me-1"></i>Customer
-                  </th>
-                  <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
-                    <i className="bi bi-telephone me-1"></i>Phone
-                  </th>
-                  <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
-                    <i className="bi bi-geo-alt me-1"></i>Location
-                  </th>
-                  <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
-                    <i className="bi bi-basket me-1"></i>Items
-                  </th>
-                  <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
-                    <i className="bi bi-cash-stack me-1"></i>Total
-                  </th>
-                  <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
-                    <i className="bi bi-calendar3 me-1"></i>Date
-                  </th>
-                  <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
-                    <i className="bi bi-info-circle me-1"></i>Status
-                  </th>
-                  <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
-                    <i className="bi bi-gear me-1"></i>Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredOrders.map((order, index) => (
+            {/* Desktop Table View */}
+            <div className="table-responsive d-none d-lg-block">
+              <Table hover className="mb-0">
+                <thead>
                   <tr 
-                    key={order._id}
                     style={{
-                      background: index % 2 === 0 ? '#fefce8' : '#fff',
-                      transition: 'all 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = '#fef3c7';
-                      e.currentTarget.style.transform = 'scale(1.01)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = index % 2 === 0 ? '#fefce8' : '#fff';
-                      e.currentTarget.style.transform = 'scale(1)';
+                      background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+                      borderBottom: '3px solid #000'
                     }}
                   >
-                    <td style={{ verticalAlign: 'middle' }}>
+                    <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
+                      <i className="bi bi-hash me-1"></i>Order No
+                    </th>
+                    <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
+                      <i className="bi bi-person me-1"></i>Customer
+                    </th>
+                    <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
+                      <i className="bi bi-telephone me-1"></i>Phone
+                    </th>
+                    <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
+                      <i className="bi bi-geo-alt me-1"></i>Location
+                    </th>
+                    <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
+                      <i className="bi bi-basket me-1"></i>Items
+                    </th>
+                    <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
+                      <i className="bi bi-cash-stack me-1"></i>Total
+                    </th>
+                    <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
+                      <i className="bi bi-calendar3 me-1"></i>Date
+                    </th>
+                    <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
+                      <i className="bi bi-info-circle me-1"></i>Status
+                    </th>
+                    <th className="fw-bold" style={{ color: '#000', borderBottom: 'none' }}>
+                      <i className="bi bi-gear me-1"></i>Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredOrders.map((order, index) => (
+                    <tr 
+                      key={order._id}
+                      style={{
+                        background: index % 2 === 0 ? '#fefce8' : '#fff',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#fef3c7';
+                        e.currentTarget.style.transform = 'scale(1.01)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = index % 2 === 0 ? '#fefce8' : '#fff';
+                        e.currentTarget.style.transform = 'scale(1)';
+                      }}
+                    >
+                      <td style={{ verticalAlign: 'middle' }}>
+                        <Badge 
+                          pill
+                          style={{
+                            background: 'linear-gradient(135deg, #1f2937 0%, #000 100%)',
+                            border: '2px solid #fbbf24',
+                            fontSize: '0.9rem',
+                            padding: '0.4rem 0.8rem'
+                          }}
+                        >
+                          #{order.orderNumber}
+                        </Badge>
+                      </td>
+                      <td style={{ verticalAlign: 'middle' }}>
+                        <div className="fw-semibold">{order.customerName}</div>
+                      </td>
+                      <td style={{ verticalAlign: 'middle' }}>
+                        <span className="text-muted">
+                          <i className="bi bi-telephone-fill me-1" style={{ color: '#fbbf24' }}></i>
+                          {order.phone}
+                        </span>
+                      </td>
+                      <td style={{ verticalAlign: 'middle' }}>
+                        <Badge bg="secondary" className="fw-normal">
+                          <i className="bi bi-geo-alt-fill me-1"></i>
+                          {order.location}
+                        </Badge>
+                      </td>
+                      <td style={{ verticalAlign: 'middle' }}>
+                        {order.items.map((item, idx) => (
+                          <div key={idx} className="mb-1" style={{ fontSize: '0.85rem' }}>
+                            <span className="fw-semibold">{item.foodName}</span>
+                            <span className="text-muted"> × {item.qty}</span>
+                            <span className="ms-2" style={{ color: '#f59e0b', fontWeight: '600' }}>
+                              LKR {item.price.toFixed(2)}
+                            </span>
+                          </div>
+                        ))}
+                      </td>
+                      <td style={{ verticalAlign: 'middle' }}>
+                        <div 
+                          className="fw-bold fs-6"
+                          style={{
+                            background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text'
+                          }}
+                        >
+                          LKR {order.total.toFixed(2)}
+                        </div>
+                      </td>
+                      <td style={{ verticalAlign: 'middle' }}>
+                        <div className="text-muted" style={{ fontSize: '0.85rem' }}>
+                          <div>
+                            <i className="bi bi-calendar3 me-1" style={{ color: '#fbbf24' }}></i>
+                            {new Date(order.date).toLocaleDateString()}
+                          </div>
+                          <div className="mt-1">
+                            <i className="bi bi-clock me-1" style={{ color: '#f59e0b' }}></i>
+                            {new Date(order.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                        </div>
+                      </td>
+                      <td style={{ verticalAlign: 'middle' }}>
+                        <Badge 
+                          bg={getStatusVariant(order.status)}
+                          className="px-3 py-2"
+                          style={{ fontSize: '0.85rem' }}
+                        >
+                          {order.status}
+                        </Badge>
+                      </td>
+                      <td style={{ verticalAlign: 'middle' }}>
+                        <Form.Select
+                          size="sm"
+                          value={order.status}
+                          onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                          style={{
+                            borderWidth: '2px',
+                            borderRadius: '8px',
+                            fontWeight: '600',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <option value="Pending">Pending</option>
+                          <option value="Confirm">Confirm</option>
+                          <option value="Delivered">Delivered</option>
+                          <option value="Cancelled">Cancelled</option>
+                        </Form.Select>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="d-lg-none p-3">
+              {filteredOrders.map((order, index) => (
+                <Card 
+                  key={order._id}
+                  className="mb-3 border-0 shadow-sm"
+                  style={{
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    border: '2px solid #fbbf24'
+                  }}
+                >
+                  <Card.Header 
+                    style={{
+                      background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+                      borderBottom: '2px solid #000'
+                    }}
+                  >
+                    <div className="d-flex justify-content-between align-items-center">
                       <Badge 
                         pill
                         style={{
                           background: 'linear-gradient(135deg, #1f2937 0%, #000 100%)',
-                          border: '2px solid #fbbf24',
-                          fontSize: '0.9rem',
-                          padding: '0.4rem 0.8rem'
+                          border: '2px solid #fff',
+                          fontSize: '1rem',
+                          padding: '0.5rem 1rem'
                         }}
                       >
-                        #{order.orderNumber}
+                        <i className="bi bi-hash"></i>{order.orderNumber}
                       </Badge>
-                    </td>
-                    <td style={{ verticalAlign: 'middle' }}>
-                      <div className="fw-semibold">{order.customerName}</div>
-                    </td>
-                    <td style={{ verticalAlign: 'middle' }}>
-                      <span className="text-muted">
-                        <i className="bi bi-telephone-fill me-1" style={{ color: '#fbbf24' }}></i>
-                        {order.phone}
-                      </span>
-                    </td>
-                    <td style={{ verticalAlign: 'middle' }}>
-                      <Badge bg="secondary" className="fw-normal">
-                        <i className="bi bi-geo-alt-fill me-1"></i>
-                        {order.location}
-                      </Badge>
-                    </td>
-                    <td style={{ verticalAlign: 'middle' }}>
-                      {order.items.map((item, idx) => (
-                        <div key={idx} className="mb-1" style={{ fontSize: '0.85rem' }}>
-                          <span className="fw-semibold">{item.foodName}</span>
-                          <span className="text-muted"> × {item.qty}</span>
-                          <span className="ms-2" style={{ color: '#f59e0b', fontWeight: '600' }}>
-                            LKR {item.price.toFixed(2)}
-                          </span>
-                        </div>
-                      ))}
-                    </td>
-                    <td style={{ verticalAlign: 'middle' }}>
-                      <div 
-                        className="fw-bold fs-6"
-                        style={{
-                          background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          backgroundClip: 'text'
-                        }}
-                      >
-                        LKR {order.total.toFixed(2)}
-                      </div>
-                    </td>
-                    <td style={{ verticalAlign: 'middle' }}>
-                      <span className="text-muted" style={{ fontSize: '0.85rem' }}>
-                        <i className="bi bi-calendar3 me-1" style={{ color: '#fbbf24' }}></i>
-                        {new Date(order.date).toLocaleDateString()}
-                      </span>
-                    </td>
-                    <td style={{ verticalAlign: 'middle' }}>
                       <Badge 
                         bg={getStatusVariant(order.status)}
                         className="px-3 py-2"
-                        style={{ fontSize: '0.85rem' }}
+                        style={{ fontSize: '0.9rem' }}
                       >
                         {order.status}
                       </Badge>
-                    </td>
-                    <td style={{ verticalAlign: 'middle' }}>
+                    </div>
+                  </Card.Header>
+                  <Card.Body style={{ background: '#fefce8', padding: '1rem' }}>
+                    {/* Customer Info */}
+                    <div className="mb-3">
+                      <div 
+                        className="d-flex align-items-center mb-3 p-2 rounded"
+                        style={{ background: '#fff', border: '1px solid #e5e7eb' }}
+                      >
+                        <i className="bi bi-person-fill me-2" style={{ color: '#fbbf24', fontSize: '1.3rem' }}></i>
+                        <div className="flex-grow-1">
+                          <small className="text-muted d-block" style={{ fontSize: '0.75rem' }}>Customer Name</small>
+                          <strong style={{ fontSize: '1rem' }}>{order.customerName}</strong>
+                        </div>
+                      </div>
+                      
+                      <div 
+                        className="d-flex align-items-center mb-3 p-2 rounded"
+                        style={{ background: '#fff', border: '1px solid #e5e7eb' }}
+                      >
+                        <i className="bi bi-telephone-fill me-2" style={{ color: '#fbbf24', fontSize: '1.3rem' }}></i>
+                        <div className="flex-grow-1">
+                          <small className="text-muted d-block" style={{ fontSize: '0.75rem' }}>Phone Number</small>
+                          <strong style={{ fontSize: '1rem' }}>{order.phone}</strong>
+                        </div>
+                      </div>
+                      
+                      <div 
+                        className="d-flex align-items-center mb-3 p-2 rounded"
+                        style={{ background: '#fff', border: '1px solid #e5e7eb' }}
+                      >
+                        <i className="bi bi-geo-alt-fill me-2" style={{ color: '#fbbf24', fontSize: '1.3rem' }}></i>
+                        <div className="flex-grow-1">
+                          <small className="text-muted d-block" style={{ fontSize: '0.75rem' }}>Delivery Location</small>
+                          <Badge bg="secondary" className="fw-normal mt-1" style={{ fontSize: '0.85rem' }}>
+                            {order.location}
+                          </Badge>
+                        </div>
+                      </div>
+                      
+                      <div 
+                        className="d-flex align-items-center p-2 rounded"
+                        style={{ background: '#fff', border: '1px solid #e5e7eb' }}
+                      >
+                        <i className="bi bi-calendar-check-fill me-2" style={{ color: '#fbbf24', fontSize: '1.3rem' }}></i>
+                        <div className="flex-grow-1">
+                          <small className="text-muted d-block" style={{ fontSize: '0.75rem' }}>Order Date & Time</small>
+                          <div className="d-flex align-items-center gap-2 flex-wrap">
+                            <strong style={{ fontSize: '0.95rem' }}>
+                              <i className="bi bi-calendar3 me-1" style={{ color: '#6b7280', fontSize: '0.85rem' }}></i>
+                              {new Date(order.date).toLocaleDateString()}
+                            </strong>
+                            <strong style={{ fontSize: '0.95rem' }}>
+                              <i className="bi bi-clock-fill me-1" style={{ color: '#f59e0b', fontSize: '0.85rem' }}></i>
+                              {new Date(order.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                            </strong>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Items */}
+                    <div 
+                      className="mb-3 p-3 rounded"
+                      style={{
+                        background: '#fff',
+                        border: '2px solid #e5e7eb'
+                      }}
+                    >
+                      <div className="d-flex align-items-center mb-2">
+                        <i className="bi bi-basket-fill me-2" style={{ color: '#fbbf24', fontSize: '1.1rem' }}></i>
+                        <strong>Order Items</strong>
+                      </div>
+                      {order.items.map((item, idx) => (
+                        <div 
+                          key={idx}
+                          className="d-flex justify-content-between align-items-center mb-2 pb-2"
+                          style={{ 
+                            borderBottom: idx < order.items.length - 1 ? '1px solid #e5e7eb' : 'none'
+                          }}
+                        >
+                          <div>
+                            <div className="fw-semibold">{item.foodName}</div>
+                            <small className="text-muted">Qty: {item.qty} × LKR {item.price.toFixed(2)}</small>
+                          </div>
+                          <div 
+                            className="fw-bold"
+                            style={{ color: '#f59e0b' }}
+                          >
+                            LKR {(item.qty * item.price).toFixed(2)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Total */}
+                    <div 
+                      className="p-3 rounded mb-3"
+                      style={{
+                        background: 'linear-gradient(135deg, #1f2937 0%, #000 100%)',
+                        border: '2px solid #fbbf24'
+                      }}
+                    >
+                      <div className="d-flex justify-content-between align-items-center">
+                        <span className="text-white fw-semibold">
+                          <i className="bi bi-cash-stack me-2"></i>
+                          Total Amount
+                        </span>
+                        <span 
+                          className="fw-bold fs-5"
+                          style={{ color: '#fbbf24' }}
+                        >
+                          LKR {order.total.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Status Action */}
+                    <div>
+                      <label className="form-label fw-semibold mb-2">
+                        <i className="bi bi-gear-fill me-2" style={{ color: '#fbbf24' }}></i>
+                        Update Status
+                      </label>
                       <Form.Select
-                        size="sm"
                         value={order.status}
                         onChange={(e) => handleStatusChange(order._id, e.target.value)}
                         style={{
                           borderWidth: '2px',
                           borderRadius: '8px',
                           fontWeight: '600',
-                          cursor: 'pointer'
+                          cursor: 'pointer',
+                          padding: '0.7rem'
                         }}
                       >
-                        <option value="Pending">Pending</option>
-                        <option value="Confirm">Confirm</option>
-                        <option value="Delivered">Delivered</option>
-                        <option value="Cancelled">Cancelled</option>
+                        <option value="Pending">🕐 Pending</option>
+                        <option value="Confirm">✅ Confirm</option>
+                        <option value="Delivered">🚚 Delivered</option>
+                        <option value="Cancelled">❌ Cancelled</option>
                       </Form.Select>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
+                    </div>
+                  </Card.Body>
+                </Card>
+              ))}
             </div>
           </Card.Body>
         </Card>

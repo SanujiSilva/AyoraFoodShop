@@ -25,10 +25,17 @@ const AddOrderManual = () => {
 
   const fetchFoods = async () => {
     try {
-      const { data } = await axios.get('/admin/foods');
-      setFoods(data.filter((f) => f.quantity > 0));
+      console.log('Fetching daily foods...');
+      const { data } = await axios.get('/foods/daily');
+      console.log('Daily foods received:', data);
+      // Filter only items with quantity > 0
+      const availableFoods = data.filter((f) => f.quantity > 0);
+      console.log('Available foods:', availableFoods);
+      setFoods(availableFoods);
     } catch (error) {
-      toast.error('Failed to load foods');
+      console.error('Failed to load foods:', error);
+      console.error('Error response:', error.response?.data);
+      toast.error(error.response?.data?.message || 'Failed to load foods');
     }
   };
 
@@ -94,8 +101,29 @@ const AddOrderManual = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validation
     if (selectedItems.length === 0) {
       toast.error('Please add at least one item');
+      return;
+    }
+
+    if (!formData.customerName.trim()) {
+      toast.error('Please enter customer name');
+      return;
+    }
+
+    if (!formData.phone.trim()) {
+      toast.error('Please enter phone number');
+      return;
+    }
+
+    if (!useCustomAddress && !formData.location) {
+      toast.error('Please select a location');
+      return;
+    }
+
+    if (useCustomAddress && !formData.customAddress.trim()) {
+      toast.error('Please enter delivery address');
       return;
     }
 
@@ -104,20 +132,40 @@ const AddOrderManual = () => {
     const orderData = {
       items: selectedItems,
       total: calculateTotal(),
-      customerName: formData.customerName,
-      phone: formData.phone,
-      location: useCustomAddress ? formData.customAddress : formData.location,
+      customerName: formData.customerName.trim(),
+      phone: formData.phone.trim(),
+      location: useCustomAddress ? formData.customAddress.trim() : formData.location,
     };
+
+    console.log('Submitting order:', orderData);
 
     try {
       const { data } = await axios.post('/admin/orders', orderData);
-      toast.success(`Order #${data.orderNumber} created successfully!`);
-      navigate('/admin/orders');
+      console.log('Order created successfully:', data);
+      toast.success(`Order No${data.orderNumber} created successfully!`);
+      
+      // Reset form
+      setSelectedItems([]);
+      setFormData({
+        customerName: '',
+        phone: '',
+        location: '',
+        customAddress: '',
+      });
+      setUseCustomAddress(false);
+      
+      // Navigate after a short delay to show success message
+      setTimeout(() => {
+        navigate('/admin/orders');
+      }, 1500);
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to create order');
+      console.error('Order creation error:', error);
+      console.error('Error response:', error.response?.data);
+      const errorMessage = error.response?.data?.message || 'Failed to create order';
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (

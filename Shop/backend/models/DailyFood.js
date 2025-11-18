@@ -11,6 +11,10 @@ const dailyFoodSchema = new mongoose.Schema({
     required: [true, 'Food name is required'],
     trim: true,
   },
+  category: {
+    type: String,
+    default: 'Other',
+  },
   price: {
     type: Number,
     required: [true, 'Price is required'],
@@ -22,6 +26,10 @@ const dailyFoodSchema = new mongoose.Schema({
     min: 0,
   },
   description: {
+    type: String,
+    trim: true,
+  },
+  optionalDescription: {
     type: String,
     trim: true,
   },

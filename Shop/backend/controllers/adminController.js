@@ -96,7 +96,7 @@ export const deleteMasterFood = async (req, res) => {
 // Add food
 export const addFood = async (req, res) => {
   try {
-    const { foodId, price, quantity, date } = req.body;
+    const { foodId, price, quantity, date, optionalDescription } = req.body;
 
     // Get food details from master catalog
     const masterFood = await Food.findById(foodId);
@@ -107,9 +107,11 @@ export const addFood = async (req, res) => {
     const newDailyFood = new DailyFood({
       food: foodId,
       foodName: masterFood.foodName,
+      category: masterFood.category,
       price: price || masterFood.defaultPrice,
       quantity,
       description: masterFood.description,
+      optionalDescription: optionalDescription || '',
       image: masterFood.image,
       date: date || new Date(),
     });
@@ -210,28 +212,60 @@ export const addOrderManually = async (req, res) => {
   try {
     const { items, total, customerName, phone, location } = req.body;
 
+    // Validation
+    if (!items || items.length === 0) {
+      return res.status(400).json({ message: 'Please add at least one item' });
+    }
+
+    if (!customerName || !customerName.trim()) {
+      return res.status(400).json({ message: 'Customer name is required' });
+    }
+
+    if (!phone || !phone.trim()) {
+      return res.status(400).json({ message: 'Phone number is required' });
+    }
+
+    if (!location || !location.trim()) {
+      return res.status(400).json({ message: 'Location is required' });
+    }
+
+    if (!total || total <= 0) {
+      return res.status(400).json({ message: 'Invalid total amount' });
+    }
+
+    // Validate items structure
+    for (const item of items) {
+      if (!item.foodId || !item.foodName || !item.price || !item.qty) {
+        return res.status(400).json({ message: 'Invalid item data' });
+      }
+    }
+
     // Get the next order number
     const Counter = (await import('../models/Counter.js')).default;
     const counter = await Counter.findOneAndUpdate(
       { name: 'orderNumber' },
-      { $inc: { value: 1 } },
+      { $inc: { seq: 1 } },
       { new: true, upsert: true }
     );
 
     const newOrder = new Order({
-      orderNumber: counter.value,
+      orderNumber: counter.seq,
       items,
       total,
-      customerName,
-      phone,
-      location,
+      customerName: customerName.trim(),
+      phone: phone.trim(),
+      location: location.trim(),
       status: 'Pending',
       date: new Date(),
     });
 
     await newOrder.save();
+    
+    console.log(`✅ Manual order created: #${counter.seq} for ${customerName}`);
+    
     res.status(201).json(newOrder);
   } catch (error) {
+    console.error('Error creating manual order:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

@@ -14,6 +14,7 @@ const AddDailyFood = () => {
     selectedFoodId: '',
     price: '',
     quantity: '',
+    optionalDescription: '',
   });
 
   useEffect(() => {
@@ -37,6 +38,7 @@ const AddDailyFood = () => {
       selectedFoodId: foodId,
       price: selectedFood ? selectedFood.defaultPrice : '',
       quantity: '',
+      optionalDescription: '',
     });
   };
 
@@ -72,6 +74,7 @@ const AddDailyFood = () => {
       price: formData.price,
       quantity: formData.quantity,
       description: selectedFood.description,
+      optionalDescription: formData.optionalDescription,
       image: selectedFood.image,
       date: selectedDate,
       id: Date.now(), // Temporary ID for list management
@@ -85,6 +88,7 @@ const AddDailyFood = () => {
       selectedFoodId: '',
       price: '',
       quantity: '',
+      optionalDescription: '',
     });
   };
 
@@ -108,6 +112,7 @@ const AddDailyFood = () => {
           foodId: item.foodId,
           price: item.price,
           quantity: item.quantity,
+          optionalDescription: item.optionalDescription,
           date: selectedDate,
         });
       });
@@ -287,6 +292,31 @@ const AddDailyFood = () => {
                   />
                 </Form.Group>
 
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-semibold">
+                    <i className="bi bi-card-text me-2" style={{ color: '#fbbf24' }}></i>
+                    Optional Description
+                  </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    name="optionalDescription"
+                    placeholder="Add optional notes or custom description for today..."
+                    value={formData.optionalDescription}
+                    onChange={handleChange}
+                    style={{
+                      borderWidth: '2px',
+                      borderRadius: '8px',
+                      padding: '0.6rem',
+                      resize: 'vertical'
+                    }}
+                  />
+                  <Form.Text className="text-muted">
+                    <i className="bi bi-info-circle me-1"></i>
+                    Add special notes or promotions for this item (optional)
+                  </Form.Text>
+                </Form.Group>
+
                 <Button 
                   type="submit" 
                   className="w-100"
@@ -404,6 +434,25 @@ const AddDailyFood = () => {
                                 <p className="mb-0 text-muted" style={{ fontSize: '0.85rem' }}>
                                   {item.description}
                                 </p>
+                              )}
+                              {item.optionalDescription && (
+                                <div 
+                                  className="mt-2 p-2 rounded"
+                                  style={{
+                                    background: 'rgba(251, 191, 36, 0.1)',
+                                    border: '1px solid #fbbf24'
+                                  }}
+                                >
+                                  <div className="d-flex align-items-start gap-2">
+                                    <i className="bi bi-info-circle-fill mt-1" style={{ color: '#fbbf24', fontSize: '0.9rem' }}></i>
+                                    <div>
+                                      <small className="fw-semibold" style={{ color: '#1f2937' }}>Optional Note:</small>
+                                      <p className="mb-0 text-muted" style={{ fontSize: '0.85rem' }}>
+                                        {item.optionalDescription}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
                               )}
                               <div className="d-flex align-items-center gap-3 mt-2">
                                 <span className="fw-semibold" style={{ color: '#22c55e' }}>
