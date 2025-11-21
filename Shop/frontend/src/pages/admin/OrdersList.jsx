@@ -15,17 +15,12 @@ const OrdersList = () => {
 
   useEffect(() => {
     fetchOrders();
+    fetchLocations();
   }, []);
 
   useEffect(() => {
     filterOrders();
   }, [orders, selectedDate, selectedLocation, orderNumberFilter]);
-
-  useEffect(() => {
-    // Extract unique locations from orders
-    const uniqueLocations = [...new Set(orders.map(order => order.location))].sort();
-    setLocations(uniqueLocations);
-  }, [orders]);
 
   const fetchOrders = async () => {
     try {
@@ -35,6 +30,19 @@ const OrdersList = () => {
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load orders');
       setLoading(false);
+    }
+  };
+
+  const fetchLocations = async () => {
+    try {
+      const { data } = await axios.get('/admin/locations');
+      const locationNames = data.map(loc => loc.name).sort();
+      setLocations(locationNames);
+    } catch (err) {
+      console.error('Failed to load locations:', err);
+      // Fallback to extracting from orders if API fails
+      const uniqueLocations = [...new Set(orders.map(order => order.location))].sort();
+      setLocations(uniqueLocations);
     }
   };
 
